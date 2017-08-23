@@ -23,12 +23,14 @@ class Cart < ActiveRecord::Base
     line_item
   end
 
-  def self.checkout(user)
-    user.current_cart.line_items.each do |line_item|
+  def checkout
+    self.status = "submitted"
+    self.line_items.each do |line_item|
       line_item.item.inventory -= line_item.quantity
       line_item.item.save
     end
-    user.current_cart.destroy
+    self.user.current_cart = nil
+    self.user.save
   end
 
 
